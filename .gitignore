@@ -1,0 +1,14 @@
+# Ignore all, except a (very) few files
+*
+
+# Bootstrap script
+!/bin/bootstrap
+
+# Bootstrap library
+!/lib/bootstrap
+
+# Documentation
+!/README.rst
+
+# This file!
+!/.gitignore
