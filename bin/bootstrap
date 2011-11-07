@@ -1,43 +1,81 @@
 #!/bin/sh
 
-# Detect PATH
+###############################################################################
+# Initializations
+
+# Detect path
 BINPATH="$( cd "$( dirname "$0" )" && pwd )";
 ROOTPATH="`dirname "$BINPATH"`";
 
-# Make sure not to bootstrap twice!
+# Variables
 bootstrap_flag_file=$ROOTPATH/var/bootstrapped
-if [ -e  $bootstrap_flag_file ]; then
-    echo "ERROR: project seems to have already been bootstrapped! $bootstrap_flag_file already exists. Cannot bootstrap again."
-    exit 1
-fi
 
-# Locate Python
-# Try system's global Python
-python=`which python`
-if [ ! -x $python ]; then
-    echo "Couldn't autodetect Python"
-    echo "Customize the following command with Python executable: 'python lib/buildout/bootstrap.py --distribute -c lib/buildout/bootstrap.cfg buildout:directory=$ROOTPATH'"
-    exit 1
-else
-    echo "Using $python, which version is:"
-    $python --version
-fi
+###############################################################################
+# Functions
 
-# Bootstrap buildout
-echo "Bootstraping zc.buildout..."
-success=0
-mkdir -p $ROOTPATH/lib/buildout && \
-    $python $ROOTPATH/lib/bootstrap/bootstrap.py --distribute -c $ROOTPATH/lib/bootstrap/bootstrap.cfg buildout:directory=$ROOTPATH && \
-    $ROOTPATH/bin/buildout -N -c $ROOTPATH/lib/bootstrap/bootstrap.cfg buildout:directory=$ROOTPATH && \
-    success=1
-if [ ! $success -eq 1 ]; then
-    echo "ERROR: buildout returned an error. See messages above."
-    exit 1
-else
-    echo "Done. zc.buildout bootstraped."
-    echo "You should use 'bin/paster' to configure your deployment. Try 'bin/paster create --list-templates' to see available templates."
-fi
+# Locates Python executable.
+# Assigns global $python variable.
+which_python()
+{
+    # Try system's global Python
+    python=`which python`
+    if [ ! -x $python ]; then
+        echo "Couldn't autodetect Python"
+        echo "Customize the following command with Python executable: 'python lib/buildout/bootstrap.py --distribute -c lib/buildout/bootstrap.cfg buildout:directory=$ROOTPATH'"
+        exit 1
+    else
+        echo "Using $python, which version is:"
+        $python --version
+    fi
+}
 
-# Bootstrap flag
-mkdir -p $ROOTPATH/var
-touch $bootstrap_flag_file
+# Bootstraps buildout
+bootstrap_buildout()
+{
+    $python $ROOTPATH/lib/bootstrap/bootstrap.py --distribute -c $ROOTPATH/lib/bootstrap/bootstrap.cfg buildout:directory=$ROOTPATH
+}
+
+# Runs buildout
+run_buildout()
+{
+    $ROOTPATH/bin/buildout -N -c $ROOTPATH/lib/bootstrap/bootstrap.cfg buildout:directory=$ROOTPATH
+}
+
+# Actually performs bootstrap.
+bootstrap()
+{
+    # Make sure not to bootstrap twice!
+    if [ -e  $bootstrap_flag_file ]; then
+        echo "ERROR: project seems to have already been bootstrapped! $bootstrap_flag_file already exists. Cannot bootstrap again."
+        exit 1
+    fi
+
+    # Locate Python
+    which_python
+
+    # Bootstrap buildout
+    echo "Bootstraping zc.buildout..."
+    success=0
+    mkdir -p $ROOTPATH/lib/buildout
+    bootstrap_buildout && run_buildout && success=1
+    if [ ! $success -eq 1 ]; then
+        echo "ERROR: buildout returned an error. See messages above."
+        exit 1
+    else
+        echo "Done. zc.buildout bootstraped."
+        echo "You should use 'bin/paster' to configure your deployment. Try 'bin/paster create --list-templates' to see available templates."
+    fi
+
+    # Bootstrap flag
+    mkdir -p $ROOTPATH/var
+    touch $bootstrap_flag_file
+}
+
+###############################################################################
+# Main
+
+# Handle arguments
+action="bootstrap"
+
+# Perform action
+$action
