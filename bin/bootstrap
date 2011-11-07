@@ -67,7 +67,7 @@ bootstrap()
     fi
 
     # Bootstrap flag
-    mkdir -p $ROOTPATH/var
+    mkdir -p `dirname $bootstrap_flag_file`
     touch $bootstrap_flag_file
 }
 
