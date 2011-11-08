@@ -19,7 +19,7 @@ Usage
   ::
 
     # Get the source
-    git clone ssh://TRIGRAM@cgit.makina-corpus.net/home/users/bbr/git/drupal-bootstrap.git
+    git clone git@github.com:makinacorpus/drupalindustry.bootstrap.git
 
 * On the server, run:
   ::
