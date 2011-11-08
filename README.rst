@@ -31,6 +31,12 @@ Usage
     You can execute bootstrap from anywhere, with a relative or absolute
     path, i.e. the command could be "/PATH/TO/bin/bootstrap".
 
+* Done!
+
+  Then we suggest you configure your environment with
+  `drupalindustry.templates`_, which was installed during bootstrap. See
+  `drupalindustry.templates documentation`_.
+
 **********
 References
 **********
@@ -39,3 +45,4 @@ References
 
 .. _`drupalindustry.templates`: https://github.com/makinacorpus/drupalindustry.templates/
 .. _`Drupal requirements`: http://drupal.org/requirements
+.. _`drupalindustry.templates documentation`: https://github.com/makinacorpus/drupalindustry.templates/blob/master/README.rst
